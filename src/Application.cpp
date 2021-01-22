@@ -5,6 +5,33 @@
 #include <fstream>
 #include <sstream>
 
+#define GlCall(x) GLClearError();\
+	x;\
+	ASSERT(GlLogCall(#x, __FILE__, __LINE__))
+
+#define ASSERT(x) if ((!x)) __debugbreak(); 
+static void GLClearError()
+{
+	while (glGetError() != GL_NO_ERROR);
+
+
+}
+
+static bool GlLogCall(const char* function, const char* file, int line) 
+{
+
+	while (GLenum error = glGetError())
+	{
+
+		std::cout << "[OpenGL Error](" << error << "):" << function <<
+		" " << file << " : " << line << std::endl;
+		return false;
+	
+	}
+	return true;
+
+
+}
 struct ShaderProgramSource
 {
 	std::string VertexSource;
@@ -120,12 +147,12 @@ int main(void) {
 	};
 
 	unsigned int buffer;
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, 6 * 2* (sizeof(float)), positions, GL_STATIC_DRAW);
+	GlCall(glGenBuffers(1, &buffer));
+	GlCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
+	GlCall(glBufferData(GL_ARRAY_BUFFER, 6 * 2* (sizeof(float)), positions, GL_STATIC_DRAW));
 
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+	GlCall(glEnableVertexAttribArray(0));
+	GlCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
 
 
 	unsigned int ibo;
@@ -145,9 +172,9 @@ int main(void) {
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-
+		
+		GlCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+	
 		glfwSwapBuffers(window);//
 		glfwPollEvents();
 
