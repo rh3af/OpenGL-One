@@ -1,2 +1,3 @@
 # OpenGL-One
-### Used Shader Vertex and Fragments
+#### Used GLEW and GLFW Libraries
+#### Used Shader Vertex and Fragments
